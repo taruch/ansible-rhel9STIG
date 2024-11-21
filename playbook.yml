@@ -1,0 +1,17 @@
+- hosts: all
+  vars_files:
+    - stig_defaults.yml
+  tasks:
+
+  - name: Run the RedHatOfficial RHEL9 STIG
+    import_role: RedHatOfficial.rhel9_stig
+
+  - name: Run OSCAP STIG Check
+    ansible.builtin.command: >
+      oscap xccdf eval --profile stig --results stig-results.xml
+      /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
+
+  - name: Turn OSCAP STIG Check into Report
+    ansible.builtin.command: >
+      oscap xccdf eval --report stig-scan-report.html 
+      --profile stig /usr/share/xml/scap/ssg/content/ssg-rhel9-ds.xml
